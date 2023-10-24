@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container col-4 mt-5">
+    <h1>Edit Book</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.title.label(class='form.label')}}
+        {{ form.title(class='form-control') }}
+
+        {{ form.summary.label(class='form.label')}}
+        {{ form.summary(class='form-control') }}
+
+        {{ form.author.label(class='form.label')}}
+        {{ form.author(class='form-control') }}
+
+       
+        <div class="d-grid gap-2 my-3">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+
+    </form>
+</div> 
+
+{% endblock content %}
