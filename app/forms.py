@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, EqualTo
 
 class SignUpForm(FlaskForm):
     first_name = StringField('first_name', [DataRequired()])
-    last_name = StringField('first_name', [DataRequired()])
     username = StringField('Username', [DataRequired()])
     email = StringField("Email", [DataRequired()])
     password = PasswordField("Password", [DataRequired()])
@@ -21,3 +20,4 @@ class BookForm(FlaskForm):
     title = StringField('title', [DataRequired()])
     summary = StringField('summary', [DataRequired()])
     author = StringField('author', [DataRequired()])
+    submit = SubmitField()

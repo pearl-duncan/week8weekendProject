@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container col-4 border mt-5">
+    <h2>Add a Book to you List</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        {{ form.title(class='form-control', placeholder='Title') }}
+
+        {{ form.summary(class='form-control', placeholder='Summary') }}
+
+        {{ form.author(class='form-control', placeholder='Author') }}
+
+        
+        <div class="d-grid gap-2 my-3">
+            {{ form.submit(class='btn btn-primary') }}
+        </div>
+    </form>
+</div>
+
+
+
+
+{% endblock %}

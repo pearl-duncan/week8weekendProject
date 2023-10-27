@@ -1,9 +1,11 @@
-from app import app, db
+from app import app
 from flask import request, render_template, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, current_user
-from models import User, Book
-from forms import LoginForm, SignUpForm, BookForm
+from .models import User, Book, db
+from .forms import LoginForm, SignUpForm, BookForm
 from flask_login import login_user, logout_user
+from datetime import datetime
+
 
 
 @app.route("/")
@@ -22,15 +24,15 @@ def register():
             username = form.username.data
             password = form.password.data
 
-            new_user = User(first_name, last_name, username, password)
-            db.session.add(new_user)
+            user = User(first_name, last_name, username, password)
+            db.session.add(user)
             db.session.commit()
 
             flash("You're signed up!", 'success')
             return redirect(url_for('index'))
         else:
              flash("Invalid form. Please try again", 'danger')
-    return render_template('register.html')
+    return render_template('register.html', form=form)
             
 
 @app.route('/login', methods =['GET', 'POST'])
@@ -73,54 +75,69 @@ def add_book():
             summary = form.summary.data
             author = form.author.data
 
-            new_book = Book(title, summary, author)
+            book = Book(title, summary, author)
 
-            db.session.add(new_book)
+            db.session.add(book)
             db.session.commit()
 
             flash("book saved!", 'success')
+            return redirect(url_for('readingList'))
         else:
             flash("Invalid form. Please try again", 'danger')
-    return render_template("index.html", form = form)
+    return render_template("add_book.html", form = form)
 
 @app.route('/book/<book_id>')
 @jwt_required
 def ind_book(book_id):
-    book = Book.query.filter_by(book_id)
-    return render_template('ind_book.html', book=book)
+    book = Book.query.get(book_id)
+    return render_template('ind_book.html', b=book)
 
-@app.route('/reading_list', methods=['GET', 'POST'])
+@app.route('/reading_list')
 def readingList():
-    books = Book.query.filter(User.user.id==current_user.id).all()
-    return render_template('reading_list.html', books=books)
+    book = Book.query.order_by(Book.date_created.desc()).all()
+    return render_template('reading_list.html', b=book)
 
-@app.route("/delete_book/<book_id")
+@app.route("/book/delete/<book_id", method=['GET', 'POST'])
 @jwt_required
 def delete(book_id):
     book = Book.query.filter(book_id).first_or_404()
+    if not book:
+        flash('that book does not exits', 'danger')
+        return redirect(url_for('readingList'))
+    if current_user.id != book.user_id:
+        flash('You cannot delete someone else\'s book', 'danger')
+        return redirect(url_for('ind_book', book_id=book_id))
     db.session.delete(book)
     db.session.commit()
     flash("that book has been removed from your list", 'danger')
-    return redirect(url_for('reading_list'))
+    return redirect(url_for('readingList'))
 
 @app.route('/update_book/<book_id>')
 @jwt_required
-def update(book_id):
+def update_book(book_id):
+    book = Book.query.get(book_id)
+    if not book:
+        flash("That book does not extist", 'danger')
+        return redirect(url_for('readingList'))
+    if current_user.id != book.user_id:
+        flash('You cannot edit another persons book', 'danger')
+        return redirect(url_for('ind_book', book_id=book_id))
     form = BookForm()
     if request.method == "POST":
-        if form.validate() and book_id==book_id:
+        if form.validate():
             title = form.title.data
             summary = form.summary.data
             author = form.author.data
 
-            updated_book = Book(title, summary, author)
+            book.title = title
+            book.summary = summary
+            book.author = author 
+            book.last_updated = datetime.utcnow()
 
-            db.session.add(updated_book)
             db.session.commit()
-
             flash("Book has been updated!", 'success')
-        else:
-            flash("Invalid form, please try again", 'danger')
-    return render_template('edit_book.html')
+            return redirect(url_for('ind_book', book_id=book_id))
+        
+    return render_template('edit_book.html', b=book, form=form)
 
 

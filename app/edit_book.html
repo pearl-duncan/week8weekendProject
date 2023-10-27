@@ -8,14 +8,12 @@
     <form method="POST">
         {{ form.hidden_tag() }}
 
-        {{ form.title.label(class='form.label')}}
-        {{ form.title(class='form-control') }}
+        {{ form.title(class='form-control', placeholder='Title', value='p.title') }}
 
-        {{ form.summary.label(class='form.label')}}
-        {{ form.summary(class='form-control') }}
+        {{ form.summary(class='form-control', placeholder='Summary', value='p.summary') }}
 
-        {{ form.author.label(class='form.label')}}
-        {{ form.author(class='form-control') }}
+        {{ form.author(class='form-control', placeholder='Author', value='p.author') }}
+
 
        
         <div class="d-grid gap-2 my-3">

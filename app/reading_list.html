@@ -1,41 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="heading">
-        <h4>My Reading List</h4>
-    </div>
-    {% for book in books %}
+<div class="container col-4 border mt-5">
+   {% for b in books %}
     <div class="card" style="width: 18rem;">
         <div class="card-body">
-          <h5 class="card-title">{{ book.title }}</h5>
-          <p class="card-text">{{ book.summary }}</p>
-          <p class="card-text">${{ book.author }}</p>
-          <div class='cart-item-btn'><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItem{{ book.id }}">Remove from list</button></div>
-        </div>
-    
-        <div class="modal fade" id="deleteBook{{ book.id }}" tabindex="-1" aria-labelledby="deleteBookLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteBookLabel">Remove from list - Are you sure?</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        This action cannot be reversed. Are you sure you want to remove this book from your list?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <form action="{{ url_for('remove_from_list', book_id=book.id) }}" method="POST">
-                            <input type="submit" value="Delete" class="btn btn-danger">
-                        </form>
-                    </div>
-                </div>
-            </div>
+            <h5 class="card-title">{{ b.title }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ b.author }}</h6>
+            <p class="card-text">{{ b.summary }}</p>
         </div>
     </div>
-    <br>
-    {% endfor %}
-    <br>
+   {% endfor %}
 </div>
-{% endblock content %}
+{% endblock %}
