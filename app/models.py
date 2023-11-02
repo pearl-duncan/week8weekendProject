@@ -15,6 +15,8 @@ class User(db.Model):
     username = db.Column(db.String(16), unique = True, nullable = False)
     password = db.Column(db.String(256), nullable = False)
 
+    added_a_book = db.relationship("Book", backref="creator")
+
 
     def __init__(self, first_name, last_name, username, password):
         self.id = str(uuid4())
@@ -63,7 +65,6 @@ class Book(db.Model):
     author = db.Column(db.String, nullable = False)
     created_by = db.Column(db.String(64), db.ForeignKey("user.id"), nullable = False)
 
-    author = db.relationship("User", backref="creator")
 
     def __init__(self, title, summary, author, created_by):
         self.id = str(uuid4())

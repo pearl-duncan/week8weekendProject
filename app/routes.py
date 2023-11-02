@@ -65,7 +65,7 @@ def logout():
     flash("You have successfully logged out", 'success')
     return redirect(url_for('login_page'))
 
-@app.route("/addBook")
+@app.route("/add_book", methods=['GET', 'POST'])
 @jwt_required
 def add_book():
     form = BookForm()
@@ -97,7 +97,7 @@ def readingList():
     book = Book.query.order_by(Book.date_created.desc()).all()
     return render_template('reading_list.html', b=book)
 
-@app.route("/book/delete/<book_id", method=['GET', 'POST'])
+@app.route("/book/delete/<book_id>")
 @jwt_required
 def delete(book_id):
     book = Book.query.filter(book_id).first_or_404()
