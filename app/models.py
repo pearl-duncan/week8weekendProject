@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from uuid import uuid4
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user
 
 
 db = SQLAlchemy()
@@ -11,11 +12,10 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50))
     username = db.Column(db.String(16), unique = True, nullable = False)
     password = db.Column(db.String(256), nullable = False)
 
-    added_a_book = db.relationship("Book", backref="creator")
 
 
     def __init__(self, first_name, last_name, username, password):
@@ -63,15 +63,13 @@ class Book(db.Model):
     title = db.Column(db.String(64), nullable = False)
     summary = db.Column(db.Text)
     author = db.Column(db.String, nullable = False)
-    created_by = db.Column(db.String(64), db.ForeignKey("user.id"), nullable = False)
 
 
-    def __init__(self, title, summary, author, created_by):
+    def __init__(self, title, summary, author):
         self.id = str(uuid4())
         self.title = title
         self.summary = summary
         self.author = author 
-        self.created_by = created_by
 
     def create(self):
         db.session.add(self)

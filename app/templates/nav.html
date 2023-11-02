@@ -9,7 +9,7 @@
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
             </li>
-            {% if current_user.is_authenticated %}
+            
                 <li class="nav-item">
                     <a class="nav-link" href="/addBook">+</a>
                 </li>
@@ -19,14 +19,14 @@
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Hi, {{ current_user.username }}</a>
                 </li>
-            {% else %}
+            
             <li class="nav-item">
                 <a class="nav-link" href="/signup">Sign up</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/login">Log in</a>
             </li>
-            {% endif %}
+            
             <li class="nav-item">
                 <a class="nav-link" href="/reading_list">Reading List</a>
             </li>

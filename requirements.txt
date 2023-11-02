@@ -6,7 +6,6 @@ click==8.1.7
 colorama==0.4.6
 Flask==2.3.3
 Flask-Cors==4.0.0
-Flask-JWT-Extended==4.5.3
 Flask-Login==0.6.2
 Flask-Migrate==4.0.5
 Flask-Moment==1.0.5

@@ -1,9 +1,8 @@
 from app import app
 from flask import request, render_template, flash, redirect, url_for
-from flask_jwt_extended import jwt_required, current_user
 from .models import User, Book, db
 from .forms import LoginForm, SignUpForm, BookForm
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 
 
@@ -20,16 +19,16 @@ def register():
     if request.method == "POST":
         if form.validate():
             first_name = form.first_name.data
-            last_name = form.last_name.data
+            email = form.email.data
             username = form.username.data
             password = form.password.data
 
-            user = User(first_name, last_name, username, password)
+            user = User(first_name, email, username, password)
             db.session.add(user)
             db.session.commit()
 
             flash("You're signed up!", 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('login_page'))
         else:
              flash("Invalid form. Please try again", 'danger')
     return render_template('register.html', form=form)
@@ -59,14 +58,12 @@ def login_page():
     return render_template('login.html', form=form)
 
 @app.route('/logout')
-@jwt_required
 def logout():
     logout_user()
     flash("You have successfully logged out", 'success')
     return redirect(url_for('login_page'))
 
-@app.route("/add_book", methods=['GET', 'POST'])
-@jwt_required
+@app.route("/addBook", methods=['GET', 'POST'])
 def add_book():
     form = BookForm()
     if request.method == "POST":
@@ -87,18 +84,16 @@ def add_book():
     return render_template("add_book.html", form = form)
 
 @app.route('/book/<book_id>')
-@jwt_required
 def ind_book(book_id):
     book = Book.query.get(book_id)
     return render_template('ind_book.html', b=book)
 
 @app.route('/reading_list')
 def readingList():
-    book = Book.query.order_by(Book.date_created.desc()).all()
-    return render_template('reading_list.html', b=book)
+    book = Book.query.order_by(Book.created_at.desc()).all()
+    return render_template('reading_list.html', books=book)
 
 @app.route("/book/delete/<book_id>")
-@jwt_required
 def delete(book_id):
     book = Book.query.filter(book_id).first_or_404()
     if not book:
@@ -113,7 +108,6 @@ def delete(book_id):
     return redirect(url_for('readingList'))
 
 @app.route('/update_book/<book_id>')
-@jwt_required
 def update_book(book_id):
     book = Book.query.get(book_id)
     if not book:
